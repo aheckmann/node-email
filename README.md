@@ -50,6 +50,7 @@ A simple wrapper for the sendmail command
       If not set, defaults to `exports.timeout` global setting.
 
   Global settings
+  
   - exports.timeout {number} 
     - Duration in milliseconds to wait before killing the process. 
       Defaults to 3000. Used when `timeout` is not set on a message.
