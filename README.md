@@ -22,7 +22,7 @@ A simple wrapper for the sendmail command
 
 ## Options
  
-    new email(config)
+    new Email(config)
     
   config options:
   
