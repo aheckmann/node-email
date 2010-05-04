@@ -1,6 +1,6 @@
 
-var sendmail = require('./sendmail'),
-    Email = sendmail.Email
+var lib = require('./email'),
+    Email = lib.Email
 var myMail = new Email({
   to: 'you@example.com',
   from: 'me@example.net',

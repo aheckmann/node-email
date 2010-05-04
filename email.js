@@ -31,7 +31,7 @@ exports.version = '0.0.1'
  *      when `from` was not set on a message.
  *
  * Example:
- *    var Email = require('path/to/sendmail').Email
+ *    var Email = require('path/to/email').Email
  *        myMsg = new Email({
  *          from: 'me@example.com',
  *          to:   'you@example.com',
@@ -104,7 +104,7 @@ exports.Email = Email
 
 
 function error(msg) {
-  throw new Error('sendmail error: ' + msg)
+  throw new Error('node-email error: ' + msg)
 }
 
 function formatAddress(what) {

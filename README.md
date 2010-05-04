@@ -1,4 +1,4 @@
-# sendmail for nodejs
+# node-email
 
 A simple wrapper for the sendmail command
 
@@ -7,7 +7,7 @@ A simple wrapper for the sendmail command
 [Sendmail](http://www.sendmail.org/) must be installed.
 
 ## Example
-    var Email = require('path/to/sendmail').Email
+    var Email = require('path/to/email').Email
         myMsg = new Email({
           from: 'me@example.com',
           to:   'you@example.com',
