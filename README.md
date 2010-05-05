@@ -57,7 +57,12 @@ A simple wrapper for the sendmail command
   - exports.from {string} 
     - Email address from which messages are sent. Used
       when `from` was not set on a message.
-  
+
+## Injection
+Only minimal protection against injection attacks is being done now.
+Use at your own risk. Or better yet, fork it and submit something 
+better!
+ 
 ## License 
 
 (The MIT License)
