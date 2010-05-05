@@ -1,7 +1,7 @@
 var sys = require('sys'),
     exec = require('child_process').exec
 
-exports.version = '0.0.1'
+exports.version = '0.0.2'
 
 /**
  * Email : Sends email using the sendmail command.
@@ -47,29 +47,18 @@ exports.version = '0.0.1'
 function Email(config) {
   var self = this
   config = config || {};
-  ['to','from','cc','bcc','replyTo','subject','body','bodyType','timeout'].forEach(function(val){
-    self[val] = config[val]
+  ['to','from','cc','bcc','replyTo','subject','body','bodyType','timeout'].forEach(function(key){
+    self[key] = config[key]
   })  
 }
 
 Email.prototype.send = function(callback) {
-  exec('echo "' + this._buildMsg() + '" | sendmail -t', 
+  if (!this.valid(callback)) return
+  exec('echo "' + this.msg + '" | sendmail -t', 
     { timeout: this.timeout || exports.timeout }, callback)
 }
 
-Email.prototype._buildMsg = function() {
-  if (!this.from && !exports.from)
-    error('from is required')
-    
-  if (!this.to)
-    error('to is required')
-
-  if (!this.subject)
-    error('subject is required')
-  
-  if (!this.body)
-    error('body is required')
-    
+Email.prototype.__defineGetter__("msg", function() {  
   var bcc = formatAddress(this.bcc),
       cc = formatAddress(this.cc),
       to = formatAddress(this.to),
@@ -94,17 +83,74 @@ Email.prototype._buildMsg = function() {
   mail += 'Subject:'+ this.subject +'\n'
   mail += '\n' + this.body + '\n'
   
-  return mail
-  
+  return mail.replace(/"/g, '\\"')
+})
+
+Email.prototype.valid = function(callback) {
+  if (!requiredFieldsExist(this, callback)) return false
+  if (!fieldsAreClean(this, callback)) return false
+  var validatedHeaders = ['to','from','cc','bcc','replyTo'],
+      len = validatedHeaders.length,
+      self = this,
+      addresses,
+      addLen,
+      key
+  while (len--) {
+    key = validatedHeaders[len]
+    if (self[key]) {
+      addresses = Array.isArray(self[key])
+        ? self[key]
+        : [self[key]]
+      addLen = addresses.length
+      while (addLen--) 
+        if (!isValidAddress(addresses[addLen])) 
+          return error("invalid email address : " + addresses[addLen], callback);       
+    }
+  }
+  return true
 }
-exports.timeout = 3000
-exports.from = undefined
-exports.Email = Email
 
+function requiredFieldsExist(email, callback) { 
+  if (!email.from && !exports.from)
+    return error('from is required', callback)
+ 
+  if (!email.to)
+    return error('to is required', callback)
+    
+  if (!email.subject)
+    return error('subject is required', callback) 
+     
+  if (!email.body)
+    return error('body is required', callback) 
+    
+  return true
+}
 
+var cleanHeaders = ['to','from','cc','bcc','replyTo','subject'],
+    injectionrgx = new RegExp( cleanHeaders.join(':|') + ':|content\-type:', 'i' )
+    
+function fieldsAreClean(email, callback) {
+  var len = cleanHeaders.length,
+      key
+  while (len--) {
+    key = cleanHeaders[len]
+    if (email[key]) {
+      if (injectionrgx.test(email[key]) || email[key].indexOf("%0a") > -1 || email[key].indexOf("%0d") > -1) 
+        return error("Header injection detected in [" + key + "]", callback)
+      email[key] = email[key].replace(/\n|\r/ig,'')
+    }
+  }
+  return true
+}
 
-function error(msg) {
-  throw new Error('node-email error: ' + msg)
+function error(msg, callback) {
+  var err = new Error('node-email error: ' + msg)
+  if (callback) {
+    callback(err)
+    return false
+  }
+  else
+    throw err
 }
 
 function formatAddress(what) {
@@ -112,3 +158,21 @@ function formatAddress(what) {
     ? what.join(', ')
     : what
 }
+
+// http://bassistance.de/jquery-plugins/jquery-plugin-validation/
+var emailrgx = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i,
+    capturergx = /<([^>].*)>$/
+    
+function isValidAddress(rawAddress) {
+  // john smith <email@domain.com> | email@domain.com
+  var address = capturergx.exec(rawAddress)
+  return address && address[1]
+    ? emailrgx.test(address[1])
+    : emailrgx.test(rawAddress)
+}
+
+
+exports.timeout = 3000
+exports.from = undefined
+exports.isValidAddress = isValidAddress
+exports.Email = Email
