@@ -98,9 +98,7 @@ Email.prototype.valid = function(callback) {
   while (len--) {
     key = validatedHeaders[len]
     if (self[key]) {
-      addresses = Array.isArray(self[key])
-        ? self[key]
-        : [self[key]]
+      addresses = toArray(self[key])
       addLen = addresses.length
       while (addLen--) 
         if (!isValidAddress(addresses[addLen])) 
@@ -130,6 +128,31 @@ var cleanHeaders = ['to','from','cc','bcc','replyTo','subject'],
     injectionrgx = new RegExp( cleanHeaders.join(':|') + ':|content\-type:', 'i' )
     
 function fieldsAreClean(email, callback) {
+  var len = cleanHeaders.length,
+      header,
+      vlen,
+      vals,
+      val
+  while (len--) {
+    header = cleanHeaders[len]
+    if (!email[header]) continue;
+    vals = toArray(email[header])
+    vlen = vals.length
+    while (vlen--) {
+      val = vals[vlen]
+      if (val)
+        if (injectionrgx.test(val) || val.indexOf("%0a") > -1 || val.indexOf("%0d") > -1) 
+          return error("Header injection detected in [" + header + "]", callback);
+        vals[vlen] = val.replace(/\n|\r/ig,'')
+    }
+    email[header] = 2 > vals.length
+      ? vals[0]
+      : vals
+  }
+  return true;
+  
+  
+  
   var len = cleanHeaders.length,
       key
   while (len--) {
@@ -169,6 +192,12 @@ function isValidAddress(rawAddress) {
   return address && address[1]
     ? emailrgx.test(address[1])
     : emailrgx.test(rawAddress)
+}
+
+function toArray(what) {
+  return Array.isArray(what)
+    ? what
+    : [what]
 }
 
 
