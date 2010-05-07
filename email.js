@@ -1,7 +1,7 @@
 var sys = require('sys'),
     exec = require('child_process').exec
 
-exports.version = '0.0.2'
+exports.version = '0.0.3'
 
 /**
  * Email : Sends email using the sendmail command.
@@ -148,20 +148,6 @@ function fieldsAreClean(email, callback) {
     email[header] = 2 > vals.length
       ? vals[0]
       : vals
-  }
-  return true;
-  
-  
-  
-  var len = cleanHeaders.length,
-      key
-  while (len--) {
-    key = cleanHeaders[len]
-    if (email[key]) {
-      if (injectionrgx.test(email[key]) || email[key].indexOf("%0a") > -1 || email[key].indexOf("%0d") > -1) 
-        return error("Header injection detected in [" + key + "]", callback)
-      email[key] = email[key].replace(/\n|\r/ig,'')
-    }
   }
   return true
 }
