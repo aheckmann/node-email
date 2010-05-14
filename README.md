@@ -78,9 +78,12 @@ Note that no callback was passed into `send()`, therefore errors will throw.
       when `from` was not set on a message.
 
 ## Injection
-Only minimal protection against injection attacks is being done now.
-Use at your own risk. Or better yet, fork it and submit something 
-better!
+Some protection against injection attacks is enabled. Use at your own 
+risk. Or better yet, fork it and submit something better!
+
+## Node version
+Tested against v0.1.95
+See the [node compatibility](http://wiki.github.com/ry/node/library-compatibility) page for working with earlier node versions.
  
 ## License 
 
