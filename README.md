@@ -82,7 +82,7 @@ Some protection against injection attacks is enabled. Use at your own
 risk. Or better yet, fork it and submit something better!
 
 ## Node version
-Tested against v0.1.95
+Tested against v0.1.96
 See the [node compatibility](http://wiki.github.com/ry/node/library-compatibility) page for working with earlier node versions.
  
 ## License 
