@@ -6,7 +6,7 @@ var sys = require('sys'),
     }
     
     
-exports.version = '0.0.3'
+exports.version = '0.0.4'
 
 /**
  * Email : Sends email using the sendmail command.
