@@ -1,6 +1,11 @@
 var sys = require('sys'),
-    exec = require('child_process').exec
-
+    exec = require('child_process').exec,
+    boundryidx = 0,
+    genBoundry = function(){
+      return 'part_' + Date.now() + "_" + boundryidx++
+    }
+    
+    
 exports.version = '0.0.3'
 
 /**
@@ -20,6 +25,8 @@ exports.version = '0.0.3'
  *    - body {string} The message of the email
  *    - bodyType {string} Content type of body. Only valid option is 
  *      'html' (for now). Defaults to text/plain.
+ *    - altText {string} If `bodyType` is set to 'html', this will be sent
+ *      as the alternative text.
  *    - timeout {number} Duration in milliseconds to wait before killing the 
  *      process. If not set, defaults to `exports.timeout` global setting.
  *
@@ -47,7 +54,7 @@ exports.version = '0.0.3'
 function Email(config) {
   var self = this
   config = config || {};
-  ['to','from','cc','bcc','replyTo','subject','body','bodyType','timeout'].forEach(function(key){
+  ['to','from','cc','bcc','replyTo','subject','body','bodyType','altText','timeout'].forEach(function(key){
     self[key] = config[key]
   })  
 }
@@ -59,14 +66,19 @@ Email.prototype.send = function(callback) {
 }
 
 Email.prototype.__defineGetter__("msg", function() {  
-  var bcc = formatAddress(this.bcc),
-      cc = formatAddress(this.cc),
+  var mail = '',
+      boundry = genBoundry(),
       to = formatAddress(this.to),
-      mail = ''
-      
+      cc = formatAddress(this.cc),
+      bcc = formatAddress(this.bcc),
+      html = this.bodyType && 'html' === this.bodyType.toLowerCase(),
+      plaintext = !html ? this.body : 
+                  this.altText ? this.altText : ''
+           
   mail += 'To:' + to + '\n'
   mail += 'From:'+ (this.from || exports.from) +'\n' 
-  mail += 'Reply-To:' + (this.replyTo || this.from || exports.from) +'\n'   
+  mail += 'Reply-To:' + (this.replyTo || this.from || exports.from) +'\n'
+  mail += 'Subject:'+ this.subject +'\n'  
   
   if (cc) 
     mail += 'CC:'+ cc +'\n'
@@ -74,14 +86,26 @@ Email.prototype.__defineGetter__("msg", function() {
   if (bcc) 
     mail += 'BCC:'+ bcc +'\n' 
   
-  if (this.bodyType && 'html' === this.bodyType.toLowerCase()) {
-    mail += 'MIME-Version: 1.0\n'
-    mail += 'Content-Type: text/html; charset=UTF-8\n'
-    mail += 'Content-Transfer-Encoding: 8bit\n'
+  mail += 'Mime-Version: 1.0\n'
+  mail += 'Content-Type: multipart/alternative; boundary=' + boundry + '\n\n'
+  
+  if (plaintext) {
+    mail += '--' + boundry +'\n'
+    mail += 'Content-Type: text/plain; charset=utf-8\n'
+    mail += 'Content-Transfer-Encoding: Quoted-printable\n'
+    mail += 'Content-Disposition: inline\n\n'
+    mail += plaintext
+    mail += '\n\n'
   }
   
-  mail += 'Subject:'+ this.subject +'\n'
-  mail += '\n' + this.body + '\n'
+  if (html) {
+    mail += '--' + boundry +'\n'
+    mail += 'Content-Type: text/html; charset=utf-8\n'
+    mail += 'Content-Transfer-Encoding: 8bit\n'
+    mail += 'Content-Disposition: inline\n\n'
+    mail += this.body + '\n'
+  }
+  
   
   return mail.replace(/"/g, '\\"')
 })

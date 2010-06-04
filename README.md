@@ -64,6 +64,9 @@ Note that no callback was passed into `send()`, therefore errors will throw.
   - bodyType {string} 
     - Content type of body. Only valid option is 'html' (for now). 
       Defaults to text/plain.
+  - altText {string}
+    - If `bodyType` is set to 'html', this will be sent as the text
+      alternative.
   - timeout {number} 
     - Duration in milliseconds to wait before killing the process. 
       If not set, defaults to `exports.timeout` global setting.
