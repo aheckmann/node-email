@@ -4,7 +4,15 @@ A simple wrapper for the sendmail command
 
 ## Installation
 
-[Sendmail](http://www.sendmail.org/) must be installed.
+First make sure [Sendmail](http://www.sendmail.org/) is installed.
+
+then either
+
+    npm install email
+
+or 
+
+    git clone git://github.com/aheckmann/node-email.git
 
 ## Examples
     var Email = require('path/to/email').Email
