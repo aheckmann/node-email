@@ -1,0 +1,9 @@
+{ "name": "email" , "description": "A simple wrapper for sendmail."
+, "version": "0.0.4"
+, "author": "Aaron Heckmann <aaron.heckmann+github@gmail.com>"
+, "keywords": ["email", "sendmail", "node-email"]
+, "engines": { "node": ">= 0.1.92" }
+, "bugs": "http://github.com/aheckmann/node-email/issues"
+, "licenses": [{ "type": "MIT", "url": "http://www.opensource.org/licenses/mit-license.php" }]
+, "main": "./email"
+}
