@@ -1,14 +1,22 @@
 
-var lib = require('./email'),
-    Email = lib.Email
-var myMail = new Email({
-  to: 'you@example.com',
-  from: 'me@example.net',
-  replyTo:'else@example.com',
-  subject:'greetings',
-  body:'This is the <b>message</b>, enjoy.',
-  bodyType: 'html',
-  altText: 'This is the text alternative.\n\nEnjoy.',
-  timeout: 5000
+var assert = require('assert')
+  , lib = require('../')
+  , Email = lib.Email
+
+var myMail = new Email(
+{ to: 'mario@example.com'
+, from: 'princess@bowsers-castle.com'
+, replyTo:'koopa@bowsers-castle.com'
+, subject:'save me mario!'
+, altText: 'This is the text alternative.\n\nEnjoy.'
+, timeout: 5000
 })
-myMail.send(function(err){if (err) console.dir(err)})
+
+assert.doesNotThrow(function(){myMail.valid()}, "Email body is not required.")
+   
+myMail.body = 'I need saving... <b>again</b>.'
+myMail.bodyType = 'html'
+
+myMail.send(function(err){
+  assert.ifError(err)
+})
