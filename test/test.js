@@ -11,4 +11,4 @@ var myMail = new Email({
   altText: 'This is the text alternative.\n\nEnjoy.',
   timeout: 5000
 })
-myMail.send(function(err){if (err) require('sys').p(err)})
+myMail.send(function(err){if (err) console.dir(err)})
