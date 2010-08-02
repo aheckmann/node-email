@@ -61,8 +61,8 @@ function Email(config) {
 
 Email.prototype.send = function(callback) {
   if (!this.valid(callback)) return
-  exec('echo "' + this.msg + '" | sendmail -t', 
-    { timeout: this.timeout || exports.timeout }, callback)
+  var cmd = 'echo "' + this.msg + '" | sendmail -t'
+  exec(cmd, { timeout: this.timeout || exports.timeout }, callback)
 }
 
 Email.prototype.__defineGetter__("msg", function() {  
@@ -106,7 +106,6 @@ Email.prototype.__defineGetter__("msg", function() {
     mail += this.body + '\n'
   }
   
-  
   return mail.replace(/"/g, '\\"')
 })
 
@@ -142,9 +141,6 @@ function requiredFieldsExist(email, callback) {
   if (!email.subject)
     return error('subject is required', callback) 
      
-  if (!email.body)
-    return error('body is required', callback) 
-    
   return true
 }
 
