@@ -9,7 +9,7 @@ var sys = require('sys')
 exports.Email = Email
 exports.timeout = 3000
 exports.from = undefined
-exports.version = '0.1.0'
+exports.version = '0.2.0'
 exports.isValidAddress = isValidAddress
 
 /**
