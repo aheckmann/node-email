@@ -106,7 +106,6 @@ Email.prototype = {
     if (plaintext) {
       msg.line('--' + boundry)
       msg.line('Content-Type: text/plain; charset=utf-8')
-      msg.line('Content-Transfer-Encoding: Quoted-printable')
       msg.line('Content-Disposition: inline')
       msg.line()
       msg.line(plaintext)
