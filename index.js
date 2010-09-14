@@ -43,12 +43,12 @@ exports.isValidAddress = isValidAddress
  *
  * Example:
  *    var Email = require('path/to/email').Email
- *        myMsg = new Email({
- *          from: 'me@example.com',
- *          to:   'you@example.com',
- *          subject: 'Knock knock...',
- *          body: "Who's there?"
- *        })
+ *    var myMsg = new Email(
+ *    { from: 'me@example.com'
+ *    , to:   'you@example.com'
+ *    , subject: 'Knock knock...'
+ *    , body: "Who's there?"
+ *    })
  *    myMsg.send(function(err){
  *      ...
  *    })
