@@ -238,4 +238,4 @@ assert.ok(lib.isValidAddress("email@d.com"), "Email address should be valid (sin
 assert.ok(lib.isValidAddress("&*=?^+{}'~@validCharsInLocal.net"), "Email address should be valid (valid special chars in local)")
 assert.ok(lib.isValidAddress("email@domain.newTLD"), "Email address should be valid (new TLD)")
 
-
+console.log("\u001B[32mAll tests passed\u001B[0m")
