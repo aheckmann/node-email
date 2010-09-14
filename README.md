@@ -16,33 +16,32 @@ or
 
 ## Examples
     var Email = require('path/to/email').Email
-        myMsg = new Email({
-          from: 'me@example.com',
-          to:   'you@example.com',
-          subject: 'Knock knock...',
-          body: "Who's there?"
-        })
+    var myMsg = new Email(
+    { from: "me@example.com"
+    , to:   "you@example.com"
+    , subject: "Knock knock..."
+    , body: "Who's there?"
+    })
     
     // if callback is provided, errors will be passed into it
     // else errors will be thrown
-    myMsg.send(function(err){
-      ...
-    })
+    myMsg.send(function(err){ ... })
 
 In this example we set the global `from` property so that all
 email is sent from the same address.
     
-    var lib = require('path/to/email'),
-        Email = lib.Email;
+    var lib = require('path/to/email')
+      , Email = lib.Email;
         
     lib.from = 'someAddress@youAlwaysSendFrom.com'
     
-    (new Email({
-      // no need to set the from property, already set
-      to: 'you@example.com',
-      subject: 'Knock knock...',
-      body: "Who's there?"
-    })).send()
+    // no need to set the from property, already set
+    var mail = new Email(
+    { to: "you@example.com"
+    , subject: "Knock knock..."
+    , body: "Who's there?"
+    })
+    mail.send()
 
 Note that no callback was passed into `send()`, therefore errors will throw.
     
