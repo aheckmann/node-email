@@ -101,9 +101,17 @@ Email.prototype.__defineGetter__("msg", function() {
   if (html) {
     mail += '--' + boundry +'\n'
     mail += 'Content-Type: text/html; charset=utf-8\n'
-    mail += 'Content-Transfer-Encoding: 8bit\n'
+    mail += 'Content-Transfer-Encoding: Base64\n'
     mail += 'Content-Disposition: inline\n\n'
-    mail += this.body + '\n'
+    var encoded = (new Buffer(this.body)).toString('base64')
+      , len = encoded.length
+      , size = 100
+      , start = 0
+      , chunk
+    while (chunk = encoded.substring(start, start + size > len ? len : start + size)){
+      mail += chunk + '\n'
+      start += size
+    }
   }
   
   return mail.replace(/"/g, '\\"')
