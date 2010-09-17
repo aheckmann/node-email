@@ -1,4 +1,7 @@
 
+// - node-email Copyright Aaron Heckmann <aaron.heckmann+github@gmail.com> (MIT Licensed)
+
+
 exports.Email = Email
 exports.version = '0.2.0'
 exports.from = undefined
