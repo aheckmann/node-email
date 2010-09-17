@@ -1,15 +1,17 @@
+
+exports.Email = Email
+exports.version = '0.2.0'
+exports.from = undefined
+exports.timeout = 3000
+exports.isValidAddress = isValidAddress
+
+
 var exec = require('child_process').exec
   , boundryidx = 0
   , genBoundry = function(){
       return 'part_' + Date.now() + "_" + boundryidx++
     }
 
-    
-exports.Email = Email
-exports.timeout = 3000
-exports.from = undefined
-exports.version = '0.2.0'
-exports.isValidAddress = isValidAddress
 
 /**
  * Email : Sends email using the sendmail command.
