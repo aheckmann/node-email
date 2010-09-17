@@ -1,5 +1,4 @@
-var sys = require('sys')
-  , exec = require('child_process').exec
+var exec = require('child_process').exec
   , boundryidx = 0
   , genBoundry = function(){
       return 'part_' + Date.now() + "_" + boundryidx++
