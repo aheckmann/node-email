@@ -58,13 +58,13 @@ var exec = require('child_process').exec
  *    })
  *
  **/
- 
+
 function Email(config) {
   var self = this
   config = config || {}
   ;['to','from','cc','bcc','replyTo','subject','body','bodyType','altText','timeout'].forEach(function(key){
     self[key] = config[key]
-  })  
+  })
 }
 
 
@@ -94,15 +94,15 @@ Email.prototype = {
           : this.altText  ? this.altText
           : ''
 
-    msg.line('To:' + to)
-    msg.line('From:'+ (this.from || exports.from))
-    msg.line('Reply-To:' + (this.replyTo || this.from || exports.from))
-    msg.line('Subject:'+ this.subject)
+    msg.line('To: ' + to)
+    msg.line('From: '+ (this.from || exports.from))
+    msg.line('Reply-To: ' + (this.replyTo || this.from || exports.from))
+    msg.line('Subject: '+ this.subject)
 
-    if (cc) msg.line('CC:' + cc)
+    if (cc) msg.line('CC: ' + cc)
 
-    if (bcc) msg.line('BCC:' + bcc)
-    
+    if (bcc) msg.line('BCC: ' + bcc)
+
     msg.line('Mime-Version: 1.0')
     msg.line('Content-Type: multipart/alternative; boundary=' + boundry)
     msg.line()
@@ -162,13 +162,12 @@ Email.prototype = {
         addresses = toArray(self[key])
         addLen = addresses.length
         while (addLen--) if (!isValidAddress(addresses[addLen]))
-          return error("invalid email address : " + addresses[addLen], callback);       
+          return error("invalid email address : " + addresses[addLen], callback);
       }
     }
 
     return true
   }
-
 }
 
 
@@ -185,13 +184,12 @@ Msg.prototype = {
 , toString: function(){
     return this.lines.join('\n').replace(/"/g, '\\"')
   }
-
 }
 
 
 var cleanHeaders = ['to','from','cc','bcc','replyTo','subject']
   , injectionrgx = new RegExp( cleanHeaders.join(':|') + ':|content\-type:', 'i' )
-    
+
 function fieldsAreClean(email, callback){
   var len = cleanHeaders.length
     , header
@@ -256,7 +254,7 @@ function toArray(what){
     : [what]
 }
 
-	// http://fightingforalostcause.net/misc/2006/compare-email-regex.php 
+// http://fightingforalostcause.net/misc/2006/compare-email-regex.php
 var emailrgx = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i
 
 var capturergx = /<([^>].*)>$/
