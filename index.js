@@ -21,7 +21,7 @@ var exec = require('child_process').exec
  *
  * Note: sendmail must be installed: see http://www.sendmail.org/
  *
- * @param {object} config - optional configuration object 
+ * @param {object} config - optional configuration object
  *    - to {array|string} Email address(es) to which this msg will be sent
  *    - from {string} Email address from which this msg is sent. If not set
  *      defaults to the `exports.from` global setting.
@@ -31,15 +31,16 @@ var exec = require('child_process').exec
  *    - bcc {array|string} Email address(es) who receive a blind copy
  *    - subject {string} The subject of the email
  *    - body {string} The message of the email
- *    - bodyType {string} Content type of body. Only valid option is 
+ *    - bodyType {string} Content type of body. Only valid option is
  *      'html' (for now). Defaults to text/plain.
  *    - altText {string} If `bodyType` is set to 'html', this will be sent
  *      as the alternative text.
- *    - timeout {number} Duration in milliseconds to wait before killing the 
+ *    - timeout {number} Duration in milliseconds to wait before killing the
  *      process. If not set, defaults to `exports.timeout` global setting.
+ *    - path {string} Optional path to the sendmail executable.
  *
  * Global settings
- *    - exports.timeout {number} Duration in milliseconds to wait before 
+ *    - exports.timeout {number} Duration in milliseconds to wait before
  *      killing the process. Defaults to 3000. Used when `timeout` is not set
  *      on a message.
  *    - exports.from {string} Email address from which messages are sent. Used
@@ -65,6 +66,7 @@ function Email(config) {
   ;['to','from','cc','bcc','replyTo','subject','body','bodyType','altText','timeout'].forEach(function(key){
     self[key] = config[key]
   })
+  this.path = config.path || "sendmail"
 }
 
 
@@ -76,7 +78,7 @@ Email.prototype = {
   }
 
 , get cmd(){
-    return 'echo "' + this.msg + '" | sendmail -t'
+    return 'echo "' + this.msg + '" | ' + this.path + ' -t'
   }
 
 , get options(){
