@@ -77,6 +77,8 @@ Note that no callback was passed into `send()`, therefore errors will throw.
   - timeout {number} 
     - Duration in milliseconds to wait before killing the process. 
       If not set, defaults to `exports.timeout` global setting.
+  - path {string}
+    - Optional path to the sendmail executable
 
   Global settings
   
