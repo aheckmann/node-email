@@ -1,4 +1,10 @@
 
+## v0.2.2 - 10/04/2010
+
+  add configurable sendmail path
+  now compatible with busybox
+  add license
+
 ## v0.2.1 - 09/14/2010
 
   Add thorough testing
