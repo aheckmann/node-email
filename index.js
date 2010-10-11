@@ -3,7 +3,7 @@
 
 
 exports.Email = Email
-exports.version = '0.2.0'
+exports.version = '0.2.2'
 exports.from = undefined
 exports.timeout = 3000
 exports.isValidAddress = isValidAddress
