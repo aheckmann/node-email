@@ -101,7 +101,7 @@ See the [node compatibility](http://wiki.github.com/ry/node/library-compatibilit
 
 (The MIT License)
 
-Copyright (c) 2010 [Aaron Heckmann](aaron.heckmann+github@gmail.com)
+Copyright (c) 2011 [Aaron Heckmann](aaron.heckmann+github@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
