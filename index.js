@@ -1,14 +1,6 @@
 
 // - node-email Copyright Aaron Heckmann <aaron.heckmann+github@gmail.com> (MIT Licensed)
 
-
-exports.Email = Email
-exports.version = '0.2.2'
-exports.from = undefined
-exports.timeout = 3000
-exports.isValidAddress = isValidAddress
-
-
 /**
  * Module dependencies.
  */
@@ -22,7 +14,7 @@ var exec = require('child_process').exec;
 
 var boundryidx = 0;
 function genBoundry () {
-  return 'part_' + Date.now() + "_" + boundryidx++
+  return 'part_' + Date.now() + "_" + boundryidx++;
 }
 
 /**
@@ -30,7 +22,7 @@ function genBoundry () {
  *
  * Note: sendmail must be installed: see http://www.sendmail.org/
  *
- * @param {object} config - optional configuration object
+ * @param {Object} config - optional configuration object
  *    - to {array|string} Email address(es) to which this msg will be sent
  *    - from {string} Email address from which this msg is sent. If not set
  *      defaults to the `exports.from` global setting.
@@ -66,15 +58,24 @@ function genBoundry () {
  *    myMsg.send(function(err){
  *      ...
  *    })
- *
  */
 
 function Email (config) {
-  var self = this;
   config = config || {};
-  ;['to','from','cc','bcc','replyTo','subject','body','bodyType','altText','timeout'].forEach(function(key){
-    self[key] = config[key];
-  });
+
+  ; ['to'
+    ,'from'
+    ,'cc'
+    ,'bcc'
+    ,'replyTo'
+    ,'subject'
+    ,'body'
+    ,'bodyType'
+    ,'altText'
+    ,'timeout' ].forEach(function (key) {
+    this[key] = config[key];
+  }, this);
+
   this.path = config.path || "sendmail";
 }
 
@@ -185,6 +186,12 @@ Email.prototype = {
 }
 
 
+/**
+ * Email message constructor.
+ *
+ * @return {Msg}
+ */
+
 function Msg () {
   this.lines = [];
 }
@@ -200,9 +207,20 @@ Msg.prototype = {
   }
 }
 
+/**
+ * Validation helpers.
+ */
 
 var cleanHeaders = ['to','from','cc','bcc','replyTo','subject']
   , injectionrgx = new RegExp(cleanHeaders.join(':|') + ':|content\-type:', 'i');
+
+/**
+ * Determines if any email headers contain vulnerabilities.
+ *
+ * @param {Email} email
+ * @param {Function} callback
+ * @return {Bool}
+ */
 
 function fieldsAreClean (email, callback) {
   var len = cleanHeaders.length
@@ -239,6 +257,14 @@ function fieldsAreClean (email, callback) {
   return true;
 }
 
+/**
+ * Determines if all required email fields exist.
+ *
+ * @param {Email} email
+ * @param {Function} callback
+ * @return {Bool}
+ */
+
 function requiredFieldsExist (email, callback) {
   if (!email.from && !exports.from) {
     return error('from is required', callback);
@@ -255,6 +281,15 @@ function requiredFieldsExist (email, callback) {
   return true;
 }
 
+/**
+ * Error helper that throws if no callback is passed. Else
+ * executes the callback passing the err as the first argument.
+ *
+ * @param {String} msg
+ * @param {Function} callback
+ * @return {Bool|undefined}
+ */
+
 function error (msg, callback) {
   var err = new Error('node-email error: ' + msg);
 
@@ -266,22 +301,47 @@ function error (msg, callback) {
   throw err;
 }
 
+/**
+ * Formats an array of addresses as a string.
+ *
+ * @param {Array|String} what
+ * @return {String}
+ */
+
 function formatAddress (what) {
   return Array.isArray(what)
     ? what.join(', ')
     : what;
 }
 
+/**
+ * Converts `what` to an array.
+ *
+ * @param {Mixed} what
+ * @return {Array}
+ */
+
 function toArray (what) {
   return Array.isArray(what)
     ? what
-    : [what]
+    : [what];
 }
 
-// http://fightingforalostcause.net/misc/2006/compare-email-regex.php
+/**
+ * Email validation regexps.
+ * @see http://fightingforalostcause.net/misc/2006/compare-email-regex.php
+ */
+
 var emailrgx = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
 
 var capturergx = /<([^>].*)>$/;
+
+/**
+ * Determines if `rawAddress` is a valid email address.
+ *
+ * @param {String} rawAddress
+ * @return {Bool}
+ */
 
 function isValidAddress (rawAddress) {
   // john smith <email@domain.com> | email@domain.com
@@ -290,4 +350,14 @@ function isValidAddress (rawAddress) {
     ? emailrgx.test(address[1])
     : emailrgx.test(rawAddress);
 }
+
+/**
+ * Exports.
+ */
+
+exports.Email = Email;
+exports.version = '0.2.2';
+exports.from = undefined;
+exports.timeout = 3000;
+exports.isValidAddress = isValidAddress;
 
