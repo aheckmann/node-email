@@ -7,4 +7,5 @@
 , "bugs": "http://github.com/aheckmann/node-email/issues"
 , "licenses": [{ "type": "MIT", "url": "http://www.opensource.org/licenses/mit-license.php" }]
 , "main": "./index"
+, "repository": { "type": "git", "url": "git://github.com/aheckmann/node-email.git" }
 }
