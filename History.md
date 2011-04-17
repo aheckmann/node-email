@@ -1,4 +1,10 @@
 
+## v0.2.3 - 04/16/2011
+
+  fix exports.version
+  docs
+  updated syntax
+
 ## v0.2.2 - 10/04/2010
 
   add configurable sendmail path
