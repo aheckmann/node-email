@@ -237,5 +237,6 @@ assert.ok(lib.isValidAddress("e@domain.com"), "Email address should be valid (si
 assert.ok(lib.isValidAddress("email@d.com"), "Email address should be valid (single letter domain)")
 assert.ok(lib.isValidAddress("&*=?^+{}'~@validCharsInLocal.net"), "Email address should be valid (valid special chars in local)")
 assert.ok(lib.isValidAddress("email@domain.newTLD"), "Email address should be valid (new TLD)")
+assert.ok(lib.isValidAddress("email@domain.рф"), "Email address should be valid (puny Code)")
 
 console.log("\u001B[32mAll tests passed\u001B[0m")
