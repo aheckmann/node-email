@@ -1,4 +1,8 @@
 
+## v0.2.4 - 05/24/2011
+
+  add Punycode TLD support
+
 ## v0.2.3 - 04/16/2011
 
   fix exports.version

@@ -356,7 +356,7 @@ function isValidAddress (rawAddress) {
  */
 
 exports.Email = Email;
-exports.version = '0.2.3';
+exports.version = '0.2.4';
 exports.from = undefined;
 exports.timeout = 3000;
 exports.isValidAddress = isValidAddress;
