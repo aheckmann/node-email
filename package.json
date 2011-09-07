@@ -8,4 +8,7 @@
 , "licenses": [{ "type": "MIT", "url": "http://www.opensource.org/licenses/mit-license.php" }]
 , "main": "./index"
 , "repository": { "type": "git", "url": "git://github.com/aheckmann/node-email.git" }
+, "devDependencies": {
+    "gleak": "0.0.1"
+  }
 }

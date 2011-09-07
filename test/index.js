@@ -1,6 +1,7 @@
 
 var assert = require('assert')
   , lib = require('../')
+  , gleak = require('gleak')
   , Email = lib.Email
 
 lib.timeout = 10000
@@ -238,5 +239,8 @@ assert.ok(lib.isValidAddress("email@d.com"), "Email address should be valid (sin
 assert.ok(lib.isValidAddress("&*=?^+{}'~@validCharsInLocal.net"), "Email address should be valid (valid special chars in local)")
 assert.ok(lib.isValidAddress("email@domain.newTLD"), "Email address should be valid (new TLD)")
 assert.ok(lib.isValidAddress("email@domain.рф"), "Email address should be valid (puny Code)")
+
+var leaks = gleak.detect();
+assert.equal(leaks.length, 0);
 
 console.log("\u001B[32mAll tests passed\u001B[0m")
