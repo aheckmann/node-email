@@ -1,6 +1,6 @@
 { "name": "email"
 , "description": "A simple wrapper for sendmail."
-, "version": "0.2.4"
+, "version": "0.2.5"
 , "author": "Aaron Heckmann <aaron.heckmann+github@gmail.com>"
 , "keywords": ["email", "sendmail", "node-email"]
 , "engines": { "node": ">= 0.1.92" }

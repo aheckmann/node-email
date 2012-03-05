@@ -1,4 +1,8 @@
 
+## v0.2.5 - 03/05/2012
+
+  * fixed; npm warning [boozedog]
+
 ## v0.2.4 - 05/24/2011
 
   add Punycode TLD support
