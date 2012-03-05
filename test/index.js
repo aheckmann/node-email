@@ -1,7 +1,7 @@
 
 var assert = require('assert')
   , lib = require('../')
-  , gleak = require('gleak')
+  , gleak = require('gleak')()
   , Email = lib.Email
 
 lib.timeout = 10000
