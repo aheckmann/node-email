@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Node-email by aheckmann</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Node-email</h1>
+        <p>Simple wrapper for sendmail</p>
+        <p class="view"><a href="https://github.com/aheckmann/node-email">View the Project on GitHub <small>aheckmann/node-email</small></a></p>
+        <ul>
+          <li><a href="https://github.com/aheckmann/node-email/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/aheckmann/node-email/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/aheckmann/node-email">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>node-email</h1>
+
+<p>A simple wrapper for the sendmail command</p>
+
+<h2>Installation</h2>
+
+<p>First make sure <a href="http://www.sendmail.org/">Sendmail</a> is installed.</p>
+
+<p>then either</p>
+
+<pre><code>npm install email
+</code></pre>
+
+<p>or </p>
+
+<pre><code>git clone git://github.com/aheckmann/node-email.git
+</code></pre>
+
+<h2>Examples</h2>
+
+<pre><code>var Email = require('path/to/email').Email
+var myMsg = new Email(
+{ from: "me@example.com"
+, to:   "you@example.com"
+, subject: "Knock knock..."
+, body: "Who's there?"
+})
+
+// if callback is provided, errors will be passed into it
+// else errors will be thrown
+myMsg.send(function(err){ ... })
+</code></pre>
+
+<p>In this example we set the global <code>from</code> property so that all
+email is sent from the same address.</p>
+
+<pre><code>var lib = require('path/to/email')
+  , Email = lib.Email;
+
+lib.from = 'someAddress@youAlwaysSendFrom.com'
+
+// no need to set the from property, already set
+var mail = new Email(
+{ to: "you@example.com"
+, subject: "Knock knock..."
+, body: "Who's there?"
+})
+mail.send()
+</code></pre>
+
+<p>Note that no callback was passed into <code>send()</code>, therefore errors will throw.</p>
+
+<h2>Options</h2>
+
+<pre><code>new Email(config)
+</code></pre>
+
+<p>config options:</p>
+
+<ul>
+<li>to {array|string} 
+
+<ul>
+<li>Email address(es) to which this msg will be sent</li>
+</ul>
+</li>
+<li>from {string} 
+
+<ul>
+<li>Email address from which this msg is sent. If not set
+defaults to the <code>exports.from</code> global setting.</li>
+</ul>
+</li>
+<li>replyTo {string} 
+
+<ul>
+<li>Email address to which replies will be sent. If not set 
+defaults to <code>from</code>
+</li>
+</ul>
+</li>
+<li>cc {array|string} 
+
+<ul>
+<li>Email address(es) who receive a copy</li>
+</ul>
+</li>
+<li>bcc {array|string} 
+
+<ul>
+<li>Email address(es) who receive a blind copy</li>
+</ul>
+</li>
+<li>subject {string} 
+
+<ul>
+<li>The subject of the email</li>
+</ul>
+</li>
+<li>body {string} 
+
+<ul>
+<li>The message of the email</li>
+</ul>
+</li>
+<li>bodyType {string} 
+
+<ul>
+<li>Content type of body. Only valid option is 'html' (for now). 
+Defaults to text/plain.</li>
+</ul>
+</li>
+<li>altText {string}
+
+<ul>
+<li>If <code>bodyType</code> is set to 'html', this will be sent as the text
+alternative.</li>
+</ul>
+</li>
+<li>timeout {number} 
+
+<ul>
+<li>Duration in milliseconds to wait before killing the process. 
+If not set, defaults to <code>exports.timeout</code> global setting.</li>
+</ul>
+</li>
+<li>path {string}
+
+<ul>
+<li>Optional path to the sendmail executable</li>
+</ul>
+</li>
+</ul><p>Global settings</p>
+
+<ul>
+<li>exports.timeout {number} 
+
+<ul>
+<li>Duration in milliseconds to wait before killing the process. 
+Defaults to 3000. Used when <code>timeout</code> is not set on a message.</li>
+</ul>
+</li>
+<li>exports.from {string} 
+
+<ul>
+<li>Email address from which messages are sent. Used
+when <code>from</code> was not set on a message.</li>
+</ul>
+</li>
+</ul><h2>Injection</h2>
+
+<p>Some protection against injection attacks is enabled. Use at your own 
+risk. Or better yet, fork it and submit something better!</p>
+
+<h2>Node version</h2>
+
+<p>Compatible with v0.1.92+
+See the <a href="http://wiki.github.com/ry/node/library-compatibility">node compatibility</a> page for working with earlier node versions.</p>
+
+<h2>License</h2>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) 2011 <a href="aaron.heckmann+github@gmail.com">Aaron Heckmann</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/aheckmann">aheckmann</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-30713445-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
