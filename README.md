@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/aheckmann/node-email.png)](http://travis-ci.org/aheckmann/node-email)
 # node-email
 
 A simple wrapper for the sendmail command
