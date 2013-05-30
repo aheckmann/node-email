@@ -5,7 +5,7 @@
  * Module dependencies.
  */
 
-var exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 
 /**
  * Generates a boundry string.
@@ -84,11 +84,19 @@ Email.prototype = {
 
   send: function (callback) {
     if (!this.valid(callback)) return;
-    exec(this.cmd, this.options, callback);
-  }
+    var sendmail = spawn(this.path, ['-i', '-t'], this.options);
+    sendmail.on('exit', function(code) {
+      var err = null;
+      if (code !== 0) {
+        err = new Error("Sendmail exited with code: " + code);
+      }
 
-, get cmd () {
-    return 'echo "' + this.msg + '" | ' + this.path + ' -t';
+      if (callback) {
+        callback(err);
+      }
+    });
+
+    sendmail.stdin.end(this.msg);
   }
 
 , get options () {
@@ -360,4 +368,3 @@ exports.version = '0.2.4';
 exports.from = undefined;
 exports.timeout = 3000;
 exports.isValidAddress = isValidAddress;
-
