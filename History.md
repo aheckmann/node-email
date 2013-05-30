@@ -1,4 +1,9 @@
 
+## v0.2.6 - 05/30/2013
+
+  * Fix shell injection vulnerability. [psanford](https://github.com/psanford)
+  * bump gleak;
+
 ## v0.2.5 - 03/05/2012
 
   * fixed; npm warning [boozedog]
