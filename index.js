@@ -6,6 +6,7 @@
  */
 
 var spawn = require('child_process').spawn;
+var fs = require('fs');
 
 /**
  * Generates a boundry string.
@@ -14,7 +15,7 @@ var spawn = require('child_process').spawn;
 
 var boundryidx = 0;
 function genBoundry () {
-  return 'part_' + Date.now() + "_" + boundryidx++;
+  return 'ATTACHMENT-BOUNDRY';
 }
 
 /**
@@ -34,6 +35,7 @@ function genBoundry () {
  *    - body {string} The message of the email
  *    - bodyType {string} Content type of body. Only valid option is
  *      'html' (for now). Defaults to text/plain.
+ *    - attachments {array} Attachment(s) for email.  
  *    - altText {string} If `bodyType` is set to 'html', this will be sent
  *      as the alternative text.
  *    - timeout {number} Duration in milliseconds to wait before killing the
@@ -71,6 +73,7 @@ function Email (config) {
     ,'subject'
     ,'body'
     ,'bodyType'
+    ,'attachments'
     ,'altText'
     ,'timeout' ].forEach(function (key) {
     this[key] = config[key];
@@ -95,7 +98,6 @@ Email.prototype = {
         callback(err);
       }
     });
-
     sendmail.stdin.end(this.msg);
   }
 
@@ -110,6 +112,7 @@ Email.prototype = {
       , cc = formatAddress(this.cc)
       , bcc = formatAddress(this.bcc)
       , html = this.bodyType && 'html' === this.bodyType.toLowerCase()
+      , attachments = this.attachments || []
       , plaintext = !html ? this.body
           : this.altText  ? this.altText
           : '';
@@ -124,7 +127,7 @@ Email.prototype = {
     if (bcc) msg.line('BCC: ' + bcc);
 
     msg.line('Mime-Version: 1.0');
-    msg.line('Content-Type: multipart/alternative; boundary=' + boundry);
+    msg.line('Content-Type: multipart/mixed; boundary=' + boundry);
     msg.line();
 
     if (plaintext) {
@@ -145,6 +148,19 @@ Email.prototype = {
       msg.line(this.encodedBody);
       msg.line();
     }
+
+    attachments.map(function(attachment){
+      msg.line('--' + boundry);
+      msg.line('Content-Disposition: attachment');
+      msg.line('filename="' + attachment.name + '"');
+      msg.line('Content-Type: ' + attachment.type);
+      msg.line('charset=US-ASCII');
+      msg.line('name="' + attachment.name + '"');
+      msg.line('Content-Transfer-Encoding: quoted-printable');
+      msg.line();
+      msg.line(fs.readFileSync(attachment.path));
+      msg.line();
+    });
 
     return msg.toString();
   }

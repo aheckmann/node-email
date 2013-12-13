@@ -47,6 +47,25 @@ email is sent from the same address.
 
 Note that no callback was passed into `send()`, therefore errors will throw.
     
+Attachment Example:
+
+    var lib = require('path/to/email')
+      , Email = lib.Email;
+        
+    lib.from = 'someAddress@youAlwaysSendFrom.com'
+    
+    // no need to set the from property, already set
+    var mail = new Email(
+    { to: "you@example.com"
+    , subject: "Knock knock..."
+    , body: "Who's there?",
+    , attachments: [{
+        path: "/blah/blah/blah.txt",
+        name: "blah",
+        type: "text/plain"
+      }]
+    })
+    mail.send()
 
 ## Options
  
@@ -73,6 +92,8 @@ Note that no callback was passed into `send()`, therefore errors will throw.
   - bodyType {string} 
     - Content type of body. Only valid option is 'html' (for now). 
       Defaults to text/plain.
+  - attachments {array}
+    - List of attachment objects, each object can contain "path","name", and "type" properties.
   - altText {string}
     - If `bodyType` is set to 'html', this will be sent as the text
       alternative.

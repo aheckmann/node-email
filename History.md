@@ -1,3 +1,6 @@
+## v0.2.7 - 12/13/2013
+
+  * added email attachments
 
 ## v0.2.6 - 05/30/2013
 

@@ -14,6 +14,13 @@ var myMail = new Email(
 , replyTo:'koopa@bowsers-castle.com'
 , subject:'save me mario!'
 , altText: 'This is the text alternative.\n\nEnjoy.'
+, attachments: [
+	{
+		path: __dirname + "/hello.txt",
+		name: "hello.txt",
+		type: "text/plain"
+	}
+]
 })
 
 assert.doesNotThrow(function(){myMail.valid()}, "Email body is not required.")
@@ -82,7 +89,7 @@ myMail.body = '<html><body><b>this id bold</b><table><tbody><tr><td width="100%"
 var actualMsg = myMail.msg
   , lines = actualMsg.split("\n")
 
-assert.equal(lines.length, 15, "Incorrect number of lines generated")
+assert.equal(lines.length, 25, "Incorrect number of lines generated")
 assert.equal(lines[0], "To: mario@example.com", "Unexpected To: header")
 assert.equal(lines[1], "From: princess@bowsers-castle.com", "Unexpected From: header")
 assert.equal(lines[2], "Reply-To: koopa@bowsers-castle.com", "Unexpected Reply-To: header")
@@ -91,7 +98,7 @@ assert.equal(lines[4], "CC: luigi@example.com", "Unexpected CC: header")
 assert.equal(lines[5], "BCC: toad@example.com", "Unexpected BCC: header")
 
 assert.equal(lines[6], "Mime-Version: 1.0", "Unexpected Mime: header")
-assert.ok(/^Content-Type\: multipart\/alternative; boundary=part_/.test(lines[7]), "Unexpected Content-Type: header (mail message)")
+assert.ok(/^Content-Type\: multipart\/mixed; boundary=ATTACHMENT-BOUNDRY/.test(lines[7]), "Unexpected Content-Type: header (mail message)")
 assert.equal(lines[10], "Content-Type: text/plain; charset=utf-8", "Unexpected Content-Type: header (plaintext)")
 assert.equal(lines[11], "Content-Disposition: inline", "Unexpected Content-Disposition: header (plaintext)")
 
@@ -116,7 +123,7 @@ assert.doesNotThrow(function(){myMail.valid()}, "Email addresses should be valid
 var actualMsg = myMail.msg
   , lines = actualMsg.split("\n")
 
-assert.equal(lines.length, 101, "Incorrect number of lines generated")
+assert.equal(lines.length, 111, "Incorrect number of lines generated")
 assert.equal(lines[0], "To: mario@example.com, Luigi <luigi@example.com>", "Unexpected To: header")
 assert.equal(lines[1], "From: Princess <princess@bowsers-castle.com>", "Unexpected From: header")
 assert.equal(lines[2], "Reply-To: Koopa <koopa@bowsers-castle.com>", "Unexpected Reply-To: header")
@@ -124,7 +131,7 @@ assert.equal(lines[3], "Subject: save me mario!", "Unexpected Subject: header")
 assert.equal(lines[4], "CC: Donkey Kong <donkeykong@example.com>, Gumba<gumba@example.com>", "Unexpected CC: header")
 assert.equal(lines[5], "BCC: MegaMan <megaman@example.com>, contra@example.com", "Unexpected BCC: header")
 assert.equal(lines[6], "Mime-Version: 1.0", "Unexpected Mime: header")
-assert.ok(/^Content-Type\: multipart\/alternative; boundary=part_/.test(lines[7]), "Unexpected Content-Type: header (mail message)")
+assert.ok(/^Content-Type\: multipart\/mixed; boundary=ATTACHMENT-BOUNDRY/.test(lines[7]), "Unexpected Content-Type: header (mail message)")
 assert.equal(lines[10], "Content-Type: text/plain; charset=utf-8", "Unexpected Content-Type: header (plaintext)")
 assert.equal(lines[11], "Content-Disposition: inline", "Unexpected Content-Disposition: header (plaintext)")
 assert.equal(lines[13], "This is the alt text. I hope you love it.", "Unexpected alt text message")
@@ -211,8 +218,13 @@ assert.equal(lines[95], 'eHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0dGV4dCB0ZXh0IHRleHQ
 assert.equal(lines[96], 'dCB0ZXh0IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0dGV4dCB0ZXh0', "Unexpected base64 encoding")
 assert.equal(lines[97], 'IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0', "Unexpected base64 encoding")
 assert.equal(lines[98], 'IHRleHQgdGV4dCB0ZXh0IHRleHQgdGV4dCB0ZXh0PC90ZD48L3RyPjwvdGJvZHk+PC90YWJsZT48L2JvZHk+PC9odG1sPg==', "Unexpected base64 encoding")
-
-
+assert.equal(lines[101], '--ATTACHMENT-BOUNDRY');
+assert.equal(lines[102], 'Content-Disposition: attachment');
+assert.equal(lines[103], 'filename=\\"hello.txt\\"');
+assert.equal(lines[104], 'Content-Type: text/plain');
+assert.equal(lines[105], 'charset=US-ASCII');
+assert.equal(lines[106], 'name=\\"hello.txt\\"');
+assert.equal(lines[109], 'Hello World!');
 
 // address validation tests
 assert.ok(lib.isValidAddress("email@domain.com"), "Email address should be valid")
