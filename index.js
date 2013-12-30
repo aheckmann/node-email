@@ -18,6 +18,21 @@ function genBoundry () {
   return 'ATTACHMENT-BOUNDRY';
 }
 
+function asyncForEach(list, cb, done){
+  function iter(list, index, cb){
+    if(index < list.length){
+      cb(list[index], index, function(){
+        iter(list, index + 1, cb);
+      });
+    }else{
+      done();
+    }
+  }
+  if(list){
+    iter(list, 0, cb);
+  }
+}
+
 /**
  * Email : Sends email using the sendmail command.
  *
@@ -98,14 +113,16 @@ Email.prototype = {
         callback(err);
       }
     });
-    sendmail.stdin.end(this.msg);
+    this.getMessage(function(err, message){
+      sendmail.stdin.end(message);  
+    });
   }
 
 , get options () {
     return { timeout: this.timeout || exports.timeout };
   }
 
-, get msg () {
+, getMessage: function (callback) {
     var msg = new Msg()
       , boundry = genBoundry()
       , to = formatAddress(this.to)
@@ -149,20 +166,53 @@ Email.prototype = {
       msg.line();
     }
 
-    attachments.map(function(attachment){
-      msg.line('--' + boundry);
-      msg.line('Content-Disposition: attachment');
-      msg.line('filename="' + attachment.name + '"');
-      msg.line('Content-Type: ' + attachment.type);
-      msg.line('charset=US-ASCII');
-      msg.line('name="' + attachment.name + '"');
-      msg.line('Content-Transfer-Encoding: quoted-printable');
-      msg.line();
-      msg.line(fs.readFileSync(attachment.path));
-      msg.line();
-    });
+    var attachmentError = null;
 
-    return msg.toString();
+    function handleAttachment(attachment, index, next){
+      if(attachment.path){
+        fs.readFile(attachment.path, function(err, data){
+          if(err){
+            attachmentError = err;
+          }else{
+            msg.line('--' + boundry);
+            msg.line('Content-Disposition: attachment');
+            msg.line('filename="' + attachment.name + '"');
+            msg.line('Content-Type: ' + attachment.type);
+            msg.line('charset=US-ASCII');
+            msg.line('name="' + attachment.name + '"');
+            msg.line('Content-Transfer-Encoding: quoted-printable');
+            msg.line();
+            msg.line(data);
+            msg.line();
+          }
+          next();
+        });
+      }
+      if(attachment.stream){
+        msg.line('--' + boundry);
+        msg.line('Content-Disposition: attachment');
+        msg.line('filename="' + attachment.name + '"');
+        msg.line('Content-Type: ' + attachment.type);
+        msg.line('charset=US-ASCII');
+        msg.line('name="' + attachment.name + '"');
+        msg.line('Content-Transfer-Encoding: quoted-printable');
+        msg.line();
+        var allData = "";
+        attachment.stream.on("data", function(data) {
+          allData += data;
+        });
+        attachment.stream.on("end", function() {
+          msg.line(allData);
+          msg.line();
+          next();
+        });
+      }
+    }
+
+    asyncForEach(attachments, handleAttachment, function(){
+      callback(attachmentError, msg.toString());
+    });
+    
   }
 
 , get encodedBody () {

@@ -59,11 +59,18 @@ Attachment Example:
     { to: "you@example.com"
     , subject: "Knock knock..."
     , body: "Who's there?",
-    , attachments: [{
-        path: "/blah/blah/blah.txt",
-        name: "blah",
-        type: "text/plain"
-      }]
+    , attachments: [
+        {
+          path: "/blah/blah/blah.txt",
+          name: "blah",
+          type: "text/plain"
+        },
+        {
+          stream: [Stream object],
+          name: "stream blah",
+          type: "text/plain"
+        }
+      ]
     })
     mail.send()
 
@@ -93,7 +100,7 @@ Attachment Example:
     - Content type of body. Only valid option is 'html' (for now). 
       Defaults to text/plain.
   - attachments {array}
-    - List of attachment objects, each object can contain "path","name", and "type" properties.
+    - List of attachment objects, each object can contain "path" or "stream","name", and "type" properties.
   - altText {string}
     - If `bodyType` is set to 'html', this will be sent as the text
       alternative.
