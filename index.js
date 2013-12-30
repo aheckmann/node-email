@@ -175,11 +175,10 @@ Email.prototype = {
             attachmentError = err;
           }else{
             msg.line('--' + boundry);
+            msg.line('Content-Type: ' + attachment.type + '; name="' + attachment.name + '"');
+            msg.line('Content-Description: ' + attachment.name);
             msg.line('Content-Disposition: attachment');
             msg.line('filename="' + attachment.name + '"');
-            msg.line('Content-Type: ' + attachment.type);
-            msg.line('charset=US-ASCII');
-            msg.line('name="' + attachment.name + '"');
             msg.line('Content-Transfer-Encoding: quoted-printable');
             msg.line();
             msg.line(data);
@@ -190,11 +189,10 @@ Email.prototype = {
       }
       if(attachment.stream){
         msg.line('--' + boundry);
+        msg.line('Content-Type: ' + attachment.type + '; name="' + attachment.name + '"');
+        msg.line('Content-Description: ' + attachment.name);
         msg.line('Content-Disposition: attachment');
         msg.line('filename="' + attachment.name + '"');
-        msg.line('Content-Type: ' + attachment.type);
-        msg.line('charset=US-ASCII');
-        msg.line('name="' + attachment.name + '"');
         msg.line('Content-Transfer-Encoding: quoted-printable');
         msg.line();
         var allData = "";
