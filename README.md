@@ -2,6 +2,8 @@
 
 A simple wrapper for the sendmail command
 
+[![Build Status](https://travis-ci.org/aheckmann/node-email.png?branch=master)](https://travis-ci.org/aheckmann/node-email)
+
 ## Installation
 
 First make sure [Sendmail](http://www.sendmail.org/) is installed.
