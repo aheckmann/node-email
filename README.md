@@ -17,7 +17,7 @@ or
     git clone git://github.com/aheckmann/node-email.git
 
 ## Examples
-    var Email = require('path/to/email').Email
+    var Email = require('email').Email
     var myMsg = new Email(
     { from: "me@example.com"
     , to:   "you@example.com"
@@ -32,7 +32,7 @@ or
 In this example we set the global `from` property so that all
 email is sent from the same address.
     
-    var lib = require('path/to/email')
+    var lib = require('email')
       , Email = lib.Email;
         
     lib.from = 'someAddress@youAlwaysSendFrom.com'
