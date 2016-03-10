@@ -6,6 +6,7 @@
  */
 
 var spawn = require('child_process').spawn;
+var fs = require('fs');
 
 /**
  * Generates a boundry string.
@@ -14,7 +15,22 @@ var spawn = require('child_process').spawn;
 
 var boundryidx = 0;
 function genBoundry () {
-  return 'part_' + Date.now() + "_" + boundryidx++;
+  return 'ATTACHMENT-BOUNDRY';
+}
+
+function asyncForEach(list, cb, done){
+  function iter(list, index, cb){
+    if(index < list.length){
+      cb(list[index], index, function(){
+        iter(list, index + 1, cb);
+      });
+    }else{
+      done();
+    }
+  }
+  if(list){
+    iter(list, 0, cb);
+  }
 }
 
 /**
@@ -34,6 +50,7 @@ function genBoundry () {
  *    - body {string} The message of the email
  *    - bodyType {string} Content type of body. Only valid option is
  *      'html' (for now). Defaults to text/plain.
+ *    - attachments {array} Attachment(s) for email.  
  *    - altText {string} If `bodyType` is set to 'html', this will be sent
  *      as the alternative text.
  *    - timeout {number} Duration in milliseconds to wait before killing the
@@ -71,6 +88,7 @@ function Email (config) {
     ,'subject'
     ,'body'
     ,'bodyType'
+    ,'attachments'
     ,'altText'
     ,'timeout' ].forEach(function (key) {
     this[key] = config[key];
@@ -95,21 +113,23 @@ Email.prototype = {
         callback(err);
       }
     });
-
-    sendmail.stdin.end(this.msg);
+    this.getMessage(function(err, message){
+      sendmail.stdin.end(message);  
+    });
   }
 
 , get options () {
     return { timeout: this.timeout || exports.timeout };
   }
 
-, get msg () {
+, getMessage: function (callback) {
     var msg = new Msg()
       , boundry = genBoundry()
       , to = formatAddress(this.to)
       , cc = formatAddress(this.cc)
       , bcc = formatAddress(this.bcc)
       , html = this.bodyType && 'html' === this.bodyType.toLowerCase()
+      , attachments = this.attachments || []
       , plaintext = !html ? this.body
           : this.altText  ? this.altText
           : '';
@@ -124,7 +144,7 @@ Email.prototype = {
     if (bcc) msg.line('BCC: ' + bcc);
 
     msg.line('Mime-Version: 1.0');
-    msg.line('Content-Type: multipart/alternative; boundary=' + boundry);
+    msg.line('Content-Type: multipart/mixed; boundary=' + boundry);
     msg.line();
 
     if (plaintext) {
@@ -146,7 +166,51 @@ Email.prototype = {
       msg.line();
     }
 
-    return msg.toString();
+    var attachmentError = null;
+
+    function handleAttachment(attachment, index, next){
+      if(attachment.path){
+        fs.readFile(attachment.path, function(err, data){
+          if(err){
+            attachmentError = err;
+          }else{
+            msg.line('--' + boundry);
+            msg.line('Content-Type: ' + attachment.type + '; name="' + attachment.name + '"');
+            msg.line('Content-Description: ' + attachment.name);
+            msg.line('Content-Disposition: attachment');
+            msg.line('filename="' + attachment.name + '"');
+            msg.line('Content-Transfer-Encoding: quoted-printable');
+            msg.line();
+            msg.line(data);
+            msg.line();
+          }
+          next();
+        });
+      }
+      if(attachment.stream){
+        msg.line('--' + boundry);
+        msg.line('Content-Type: ' + attachment.type + '; name="' + attachment.name + '"');
+        msg.line('Content-Description: ' + attachment.name);
+        msg.line('Content-Disposition: attachment');
+        msg.line('filename="' + attachment.name + '"');
+        msg.line('Content-Transfer-Encoding: quoted-printable');
+        msg.line();
+        var allData = "";
+        attachment.stream.on("data", function(data) {
+          allData += data;
+        });
+        attachment.stream.on("end", function() {
+          msg.line(allData);
+          msg.line();
+          next();
+        });
+      }
+    }
+
+    asyncForEach(attachments, handleAttachment, function(){
+      callback(attachmentError, msg.toString());
+    });
+    
   }
 
 , get encodedBody () {
