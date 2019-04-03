@@ -106,6 +106,7 @@ Email.prototype = {
 , get msg () {
     var msg = new Msg()
       , boundry = genBoundry()
+      , from = (this.from || exports.from)
       , to = formatAddress(this.to)
       , cc = formatAddress(this.cc)
       , bcc = formatAddress(this.bcc)
@@ -115,8 +116,8 @@ Email.prototype = {
           : '';
 
     msg.line('To: ' + to);
-    msg.line('From: '+ (this.from || exports.from));
-    msg.line('Reply-To: ' + (this.replyTo || this.from || exports.from));
+    if(from) msg.line('From: '+ from);
+    if(this.replyTo || from) msg.line('Reply-To: ' + (this.replyTo || from));
     msg.line('Subject: '+ this.subject);
 
     if (cc) msg.line('CC: ' + cc);
@@ -274,9 +275,9 @@ function fieldsAreClean (email, callback) {
  */
 
 function requiredFieldsExist (email, callback) {
-  if (!email.from && !exports.from) {
-    return error('from is required', callback);
-  }
+  // if (!email.from && !exports.from) {
+  //   return error('from is required', callback);
+  // }
 
   if (!email.to) {
     return error('to is required', callback);
