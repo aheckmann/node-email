@@ -1,3 +1,9 @@
+# DEPRECATED
+
+This project is not maintained.
+
+---
+
 # node-email
 
 A simple wrapper for the sendmail command
